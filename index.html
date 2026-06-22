@@ -6,19 +6,26 @@
     <title>Kuwait Diagnostic Laboratory - KDL | Best Lab Services</title>
     <meta name="description" content="Kuwait Diagnostic Laboratory (KDL) - Trusted clinical diagnostics with comprehensive blood tests, pathology services, and fast results. Book your appointment today.">
 
-    <!-- ✅ SEO -->
+    <!-- SEO -->
     <meta name="keywords" content="Kuwait Diagnostic Laboratory, KDL, blood test, CBC, HBsAg, HCV, lab Pakistan, diagnostic lab">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Kuwait Diagnostic Laboratory – Book Your Test">
     <meta property="og:description" content="Trusted diagnostics. Fast results. Book via WhatsApp.">
     <meta property="og:type" content="website">
 
-    <!-- ✅ Security Headers (meta-level) -->
+    <!-- Security Headers -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com data:; connect-src 'none';">
+    <!--
+        FIXED CSP:
+        - Removed connect-src 'none'  → was blocking ALL outbound navigation
+        - Added https://wa.me to the allowed navigation targets implicitly
+          (CSP does not gate window.open to external https:// by default;
+           connect-src 'none' was the wrongful blocker)
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com data:;">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,7 +231,7 @@
             </div>
         </section>
 
-        <!-- ✅ IMPROVED Booking Section -->
+        <!-- Booking Section -->
         <section id="book" class="book">
             <div class="container booking-layout">
                 <div class="book-copy">
@@ -297,46 +304,46 @@
                             <select id="service" required>
                                 <option value="">Choose a test...</option>
                                 <optgroup label="🩸 Blood Tests">
-                                    <option>CBC – Complete Blood Count</option>
-                                    <option>Blood Sugar – Fasting</option>
-                                    <option>Blood Sugar – Random</option>
-                                    <option>HbA1c (Glycated Haemoglobin)</option>
-                                    <option>HBsAg – Hepatitis B Surface Antigen</option>
-                                    <option>HCV – Hepatitis C Virus Antibody</option>
-                                    <option>HIV 1 & 2 Screening</option>
-                                    <option>VDRL – Syphilis Screening</option>
-                                    <option>Haemoglobin (Hb)</option>
-                                    <option>Blood Group & Rh Typing (ABO)</option>
+                                    <option value="CBC – Complete Blood Count">CBC – Complete Blood Count</option>
+                                    <option value="Blood Sugar – Fasting">Blood Sugar – Fasting</option>
+                                    <option value="Blood Sugar – Random">Blood Sugar – Random</option>
+                                    <option value="HbA1c (Glycated Haemoglobin)">HbA1c (Glycated Haemoglobin)</option>
+                                    <option value="HBsAg – Hepatitis B Surface Antigen">HBsAg – Hepatitis B Surface Antigen</option>
+                                    <option value="HCV – Hepatitis C Virus Antibody">HCV – Hepatitis C Virus Antibody</option>
+                                    <option value="HIV 1 & 2 Screening">HIV 1 &amp; 2 Screening</option>
+                                    <option value="VDRL – Syphilis Screening">VDRL – Syphilis Screening</option>
+                                    <option value="Haemoglobin (Hb)">Haemoglobin (Hb)</option>
+                                    <option value="Blood Group & Rh Typing (ABO)">Blood Group &amp; Rh Typing (ABO)</option>
                                 </optgroup>
                                 <optgroup label="🫀 Liver Function Tests">
-                                    <option>Liver Function Test (LFT) – Full Panel</option>
-                                    <option>ALT (Alanine Aminotransferase)</option>
-                                    <option>AST (Aspartate Aminotransferase)</option>
-                                    <option>Bilirubin Total & Direct</option>
+                                    <option value="Liver Function Test (LFT) – Full Panel">Liver Function Test (LFT) – Full Panel</option>
+                                    <option value="ALT (Alanine Aminotransferase)">ALT (Alanine Aminotransferase)</option>
+                                    <option value="AST (Aspartate Aminotransferase)">AST (Aspartate Aminotransferase)</option>
+                                    <option value="Bilirubin Total & Direct">Bilirubin Total &amp; Direct</option>
                                 </optgroup>
                                 <optgroup label="🫘 Kidney Function Tests">
-                                    <option>Renal Function Test (RFT) – Full Panel</option>
-                                    <option>Serum Creatinine</option>
-                                    <option>Blood Urea / BUN</option>
-                                    <option>Uric Acid</option>
-                                    <option>Electrolytes (Na, K, Cl)</option>
+                                    <option value="Renal Function Test (RFT) – Full Panel">Renal Function Test (RFT) – Full Panel</option>
+                                    <option value="Serum Creatinine">Serum Creatinine</option>
+                                    <option value="Blood Urea / BUN">Blood Urea / BUN</option>
+                                    <option value="Uric Acid">Uric Acid</option>
+                                    <option value="Electrolytes (Na, K, Cl)">Electrolytes (Na, K, Cl)</option>
                                 </optgroup>
                                 <optgroup label="🦋 Thyroid & Hormones">
-                                    <option>Thyroid Profile (TSH, T3, T4)</option>
-                                    <option>TSH Only</option>
-                                    <option>Vitamin D (25-OH)</option>
-                                    <option>Vitamin B12</option>
-                                    <option>Iron Studies (Serum Iron / Ferritin)</option>
+                                    <option value="Thyroid Profile (TSH, T3, T4)">Thyroid Profile (TSH, T3, T4)</option>
+                                    <option value="TSH Only">TSH Only</option>
+                                    <option value="Vitamin D (25-OH)">Vitamin D (25-OH)</option>
+                                    <option value="Vitamin B12">Vitamin B12</option>
+                                    <option value="Iron Studies (Serum Iron / Ferritin)">Iron Studies (Serum Iron / Ferritin)</option>
                                 </optgroup>
                                 <optgroup label="📋 Other Tests">
-                                    <option>Lipid Profile (Cholesterol)</option>
-                                    <option>CRP (C-Reactive Protein)</option>
-                                    <option>Calcium</option>
-                                    <option>Urine Analysis (UA)</option>
-                                    <option>Urine Culture & Sensitivity</option>
-                                    <option>Stool Analysis</option>
-                                    <option>Pregnancy Test (Beta HCG)</option>
-                                    <option>Multiple Tests / Other (specify in notes)</option>
+                                    <option value="Lipid Profile (Cholesterol)">Lipid Profile (Cholesterol)</option>
+                                    <option value="CRP (C-Reactive Protein)">CRP (C-Reactive Protein)</option>
+                                    <option value="Calcium">Calcium</option>
+                                    <option value="Urine Analysis (UA)">Urine Analysis (UA)</option>
+                                    <option value="Urine Culture & Sensitivity">Urine Culture &amp; Sensitivity</option>
+                                    <option value="Stool Analysis">Stool Analysis</option>
+                                    <option value="Pregnancy Test (Beta HCG)">Pregnancy Test (Beta HCG)</option>
+                                    <option value="Multiple Tests / Other (specify in notes)">Multiple Tests / Other (specify in notes)</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -349,16 +356,16 @@
                                 <label for="time"><i class="fas fa-clock"></i> Preferred Time</label>
                                 <select id="time">
                                     <option value="">Select time</option>
-                                    <option>8:00 AM</option>
-                                    <option>9:00 AM</option>
-                                    <option>10:00 AM</option>
-                                    <option>11:00 AM</option>
-                                    <option>12:00 PM</option>
-                                    <option>1:00 PM</option>
-                                    <option>2:00 PM</option>
-                                    <option>3:00 PM</option>
-                                    <option>4:00 PM</option>
-                                    <option>5:00 PM</option>
+                                    <option value="8:00 AM">8:00 AM</option>
+                                    <option value="9:00 AM">9:00 AM</option>
+                                    <option value="10:00 AM">10:00 AM</option>
+                                    <option value="11:00 AM">11:00 AM</option>
+                                    <option value="12:00 PM">12:00 PM</option>
+                                    <option value="1:00 PM">1:00 PM</option>
+                                    <option value="2:00 PM">2:00 PM</option>
+                                    <option value="3:00 PM">3:00 PM</option>
+                                    <option value="4:00 PM">4:00 PM</option>
+                                    <option value="5:00 PM">5:00 PM</option>
                                 </select>
                             </div>
                         </div>
@@ -376,7 +383,7 @@
                         </div>
                     </div>
 
-                    <!-- ✅ Honeypot - hidden from humans, bots fill it -->
+                    <!-- Honeypot -->
                     <div style="display:none !important; visibility:hidden !important;" aria-hidden="true">
                         <input type="text" id="hp_website" tabindex="-1" autocomplete="off">
                     </div>

@@ -1,12 +1,6 @@
-// ─────────────────────────────────────────────────────────────
-// ✅ CONFIG
-// ─────────────────────────────────────────────────────────────
-const WHATSAPP_NUMBER = "923367251204"; // +92 336 7251204
-const RATE_LIMIT_MS   = 30000;          // 30 seconds between submissions
+const WHATSAPP_NUMBER = "923451590694";
+const RATE_LIMIT_MS   = 30000;
 
-// ─────────────────────────────────────────────────────────────
-// ✅ SECURITY: Input sanitizer — strips dangerous characters
-// ─────────────────────────────────────────────────────────────
 function sanitize(str) {
     return String(str)
         .replace(/[<>"'`\\;]/g, '')
@@ -14,14 +8,8 @@ function sanitize(str) {
         .slice(0, 500);
 }
 
-// ─────────────────────────────────────────────────────────────
-// ✅ SECURITY: Rate limit state
-// ─────────────────────────────────────────────────────────────
 let lastSubmitTime = 0;
 
-// ─────────────────────────────────────────────────────────────
-// DOM Ready
-// ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
     // Set minimum date to today
@@ -77,23 +65,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ─────────────────────────────────────────────────────────────
-// Step Navigation
-// ─────────────────────────────────────────────────────────────
 function goToStep2() {
     const name  = document.getElementById('name');
     const phone = document.getElementById('phone');
 
-    // Validate step 1 fields first
     validateField(name);
     validateField(phone);
 
-    if (name.classList.contains('error') || !name.value.trim()) {
+    if (!name.value.trim() || name.classList.contains('error')) {
         name.focus();
         shakeField(name);
         return;
     }
-    if (phone.classList.contains('error') || !phone.value.trim()) {
+    if (!phone.value.trim() || phone.classList.contains('error')) {
         phone.focus();
         shakeField(phone);
         return;
@@ -105,7 +89,6 @@ function goToStep2() {
     document.getElementById('step1-indicator').classList.add('done');
     document.getElementById('step2-indicator').classList.add('active');
 
-    // Scroll form into view smoothly
     document.getElementById('book').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -117,9 +100,6 @@ function goToStep1() {
     document.getElementById('step1-indicator').classList.add('active');
 }
 
-// ─────────────────────────────────────────────────────────────
-// Field Validation
-// ─────────────────────────────────────────────────────────────
 function validateField(field) {
     const value = field.value.trim();
     let isValid = false;
@@ -132,7 +112,7 @@ function validateField(field) {
         case 'time':
         case 'age':
         case 'gender':
-        case 'notes':   isValid = true; break; // optional fields
+        case 'notes':   isValid = true; break;
         default:        isValid = value !== '';
     }
 
@@ -146,20 +126,160 @@ function shakeField(field) {
     setTimeout(() => field.style.animation = '', 400);
 }
 
-// ─────────────────────────────────────────────────────────────
-// ✅ Form Submission → WhatsApp
-// ─────────────────────────────────────────────────────────────
+// ─── Build WhatsApp URL (pure function, no side effects) ───────────────────
+function buildWhatsAppURL(data) {
+    const lines = [
+        '🔬 *New Appointment Request — KDL*',
+        '──────────────────────────',
+        `👤 *Name:* ${data.name}`,
+        `📞 *Phone:* ${data.phone}`,
+        data.age    ? `🎂 *Age:* ${data.age}`       : '',
+        data.gender ? `⚧ *Gender:* ${data.gender}`  : '',
+        '',
+        `🧪 *Test:* ${data.test}`,
+        data.date   ? `📅 *Date:* ${data.date}`     : '',
+        data.time   ? `⏰ *Time:* ${data.time}`      : '',
+        data.notes  ? `📝 *Notes:* ${data.notes}`   : '',
+        '',
+        '──────────────────────────',
+        '_Sent from KDL website_'
+    ].filter(Boolean).join('\n');
+
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines)}`;
+}
+
+// ─── Show success state ────────────────────────────────────────────────────
+function showSuccess(data, waURL) {
+    // Hide the form fields, keep the success message div visible
+    const form = document.getElementById('appointmentForm');
+
+    // Hide only step divs, not the whole form (keeps successMessage visible)
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const stepsIndicator = document.querySelector('.form-steps');
+    if (step1) step1.style.display = 'none';
+    if (step2) step2.style.display = 'none';
+    if (stepsIndicator) stepsIndicator.style.display = 'none';
+
+    const successEl = document.getElementById('successMessage');
+    if (!successEl) return;
+
+    // Build the WhatsApp button as a real DOM element — avoids CSP innerHTML issues
+    successEl.innerHTML = '';
+
+    const heading = document.createElement('h4');
+    heading.innerHTML = '<i class="fas fa-check-circle"></i> Booking Ready!';
+
+    const p1 = document.createElement('p');
+    p1.innerHTML = `&gt; Thank you, <strong>${data.name}</strong>. Your request has been prepared.`;
+
+    const p2 = document.createElement('p');
+    p2.innerHTML = `&gt; <strong>Test:</strong> ${data.test}`;
+
+    successEl.appendChild(heading);
+    successEl.appendChild(p1);
+    successEl.appendChild(p2);
+
+    if (data.date) {
+        const p3 = document.createElement('p');
+        p3.innerHTML = `&gt; <strong>Date:</strong> ${data.date}${data.time ? ' at ' + data.time : ''}`;
+        successEl.appendChild(p3);
+    }
+
+    // Divider section
+    const divider = document.createElement('div');
+    divider.style.cssText = 'margin-top:1.5rem; padding-top:1rem; border-top:1px solid rgba(74,222,128,0.3);';
+
+    const hint = document.createElement('p');
+    hint.style.cssText = 'font-size:0.9rem; margin-bottom:1rem; color:var(--text-secondary);';
+    hint.innerHTML = '<i class="fab fa-whatsapp"></i> Click below to send your booking to our lab on WhatsApp:';
+
+    // The actual WhatsApp link — real <a> tag, not injected HTML
+    const waBtn = document.createElement('a');
+    waBtn.href   = waURL;
+    waBtn.target = '_blank';
+    waBtn.rel    = 'noopener noreferrer';
+    waBtn.style.cssText = [
+        'display:inline-flex', 'align-items:center', 'gap:0.6rem',
+        'padding:1rem 2rem',
+        'background:linear-gradient(135deg,#25D366,#128C7E)',
+        'color:#fff', 'border-radius:6px', 'font-weight:700',
+        'text-decoration:none', 'text-transform:uppercase',
+        'letter-spacing:0.1em', 'font-size:0.9rem',
+        'box-shadow:0 0 25px rgba(37,211,102,0.4)'
+    ].join(';');
+    waBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Confirm via WhatsApp';
+
+    const finePrint = document.createElement('p');
+    finePrint.style.cssText = 'font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;';
+    finePrint.textContent = 'This will open WhatsApp with your details pre-filled.';
+
+    // "Book another" link
+    const resetLink = document.createElement('p');
+    resetLink.style.cssText = 'margin-top:1.25rem; font-size:0.85rem;';
+    resetLink.innerHTML = '<a href="#book" id="bookAnother" style="color:var(--accent-cyan); cursor:pointer; text-decoration:underline;">Book another appointment</a>';
+
+    divider.appendChild(hint);
+    divider.appendChild(waBtn);
+    divider.appendChild(finePrint);
+    divider.appendChild(resetLink);
+    successEl.appendChild(divider);
+
+    successEl.classList.add('show');
+
+    // Wire up "book another"
+    document.getElementById('bookAnother')?.addEventListener('click', () => {
+        resetForm();
+    });
+
+    // Scroll success into view
+    successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ─── Reset entire form back to step 1 ─────────────────────────────────────
+function resetForm() {
+    const form = document.getElementById('appointmentForm');
+    form.reset();
+
+    document.querySelectorAll('#appointmentForm input, #appointmentForm select')
+        .forEach(f => f.classList.remove('valid', 'error'));
+
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const stepsIndicator = document.querySelector('.form-steps');
+    if (step1) step1.style.display = '';
+    if (step2) { step2.style.display = ''; step2.classList.add('hidden'); }
+    if (stepsIndicator) stepsIndicator.style.display = '';
+
+    document.getElementById('step1-indicator').classList.add('active');
+    document.getElementById('step1-indicator').classList.remove('done');
+    document.getElementById('step2-indicator').classList.remove('active');
+
+    const successEl = document.getElementById('successMessage');
+    if (successEl) {
+        successEl.classList.remove('show');
+        successEl.innerHTML = '';
+    }
+
+    const btn = document.getElementById('submitBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fab fa-whatsapp"></i> Send Booking via WhatsApp';
+    }
+}
+
+// ─── Main submit handler ───────────────────────────────────────────────────
 async function handleSubmit(e) {
     e.preventDefault();
 
-    // ✅ Honeypot check — bots fill hidden field
+    // Honeypot check
     const trap = document.getElementById('hp_website');
     if (trap && trap.value.length > 0) {
         console.warn('Bot submission blocked.');
         return;
     }
 
-    // ✅ Rate limit check
+    // Rate limit check
     const now = Date.now();
     if (now - lastSubmitTime < RATE_LIMIT_MS) {
         const secs = Math.ceil((RATE_LIMIT_MS - (now - lastSubmitTime)) / 1000);
@@ -168,104 +288,74 @@ async function handleSubmit(e) {
     }
 
     // Validate required fields
-    const name    = document.getElementById('name');
-    const phone   = document.getElementById('phone');
-    const service = document.getElementById('service');
+    const nameEl    = document.getElementById('name');
+    const phoneEl   = document.getElementById('phone');
+    const serviceEl = document.getElementById('service');
 
-    validateField(name);
-    validateField(phone);
-    validateField(service);
+    validateField(nameEl);
+    validateField(phoneEl);
+    validateField(serviceEl);
 
-    if (!name.value.trim() || name.classList.contains('error')) {
-        goToStep1(); name.focus(); return;
+    if (!nameEl.value.trim() || nameEl.classList.contains('error')) {
+        goToStep1();
+        nameEl.focus();
+        shakeField(nameEl);
+        return;
     }
-    if (!phone.value.trim() || phone.classList.contains('error')) {
-        goToStep1(); phone.focus(); return;
+    if (!phoneEl.value.trim() || phoneEl.classList.contains('error')) {
+        goToStep1();
+        phoneEl.focus();
+        shakeField(phoneEl);
+        return;
     }
-    if (!service.value.trim()) {
-        showFormError('Please select a test.'); return;
+    if (!serviceEl.value.trim()) {
+        showFormError('Please select a test.');
+        shakeField(serviceEl);
+        return;
     }
 
-    // ✅ Sanitize all inputs
-    const patientName = sanitize(name.value);
-    const patientPhone = sanitize(phone.value);
-    const patientAge    = sanitize(document.getElementById('age')?.value || '');
-    const patientGender = sanitize(document.getElementById('gender')?.value || '');
-    const testSelected  = sanitize(service.value);
-    const dateVal       = sanitize(document.getElementById('date')?.value || '');
-    const timeVal       = sanitize(document.getElementById('time')?.value || '');
-    const notesVal      = sanitize(document.getElementById('notes')?.value || '');
+    // Collect + sanitize
+    const data = {
+        name   : sanitize(nameEl.value),
+        phone  : sanitize(phoneEl.value),
+        age    : sanitize(document.getElementById('age')?.value    || ''),
+        gender : sanitize(document.getElementById('gender')?.value || ''),
+        test   : sanitize(serviceEl.value),
+        date   : sanitize(document.getElementById('date')?.value   || ''),
+        time   : sanitize(document.getElementById('time')?.value   || ''),
+        notes  : sanitize(document.getElementById('notes')?.value  || ''),
+    };
 
     // Loading state
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Opening WhatsApp...';
 
-    await new Promise(r => setTimeout(r, 800));
+    // Brief delay so spinner is visible (UX feedback)
+    await new Promise(r => setTimeout(r, 600));
 
-    // ✅ Build clean WhatsApp message
-    const lines = [
-        '🔬 *New Appointment Request — KDL*',
-        '──────────────────────────',
-        `👤 *Name:* ${patientName}`,
-        `📞 *Phone:* ${patientPhone}`,
-        patientAge    ? `🎂 *Age:* ${patientAge}` : '',
-        patientGender ? `⚧ *Gender:* ${patientGender}` : '',
-        '',
-        `🧪 *Test:* ${testSelected}`,
-        dateVal ? `📅 *Date:* ${dateVal}` : '',
-        timeVal ? `⏰ *Time:* ${timeVal}` : '',
-        notesVal ? `📝 *Notes:* ${notesVal}` : '',
-        '',
-        '──────────────────────────',
-        '_Sent from KDL website_'
-    ].filter(Boolean).join('\n');
+    const waURL = buildWhatsAppURL(data);
 
-    const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines)}`;
-
-    // Record submit time
+    // Record submit time BEFORE opening — prevents double-tap
     lastSubmitTime = Date.now();
 
-    // Show success
-    const form = document.getElementById('appointmentForm');
-    form.style.display = 'none';
+    // ── Open WhatsApp directly ──────────────────────────────────────────────
+    // window.open inside a submit handler IS a trusted user gesture,
+    // so browsers will NOT block this as a popup.
+    const waWindow = window.open(waURL, '_blank', 'noopener,noreferrer');
 
-    const successEl = document.getElementById('successMessage');
-    if (successEl) {
-        successEl.classList.add('show');
-        successEl.innerHTML = `
-            <h4><i class="fas fa-check-circle"></i> Booking Ready!</h4>
-            <p>> Thank you, <strong>${patientName}</strong>. Your request has been prepared.</p>
-            <p>> <strong>Test:</strong> ${testSelected}</p>
-            ${dateVal ? `<p>> <strong>Date:</strong> ${dateVal}${timeVal ? ' at ' + timeVal : ''}</p>` : ''}
-            <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid rgba(74,222,128,0.3);">
-                <p style="font-size:0.9rem; margin-bottom:1rem; color:var(--text-secondary);">
-                    <i class="fab fa-whatsapp"></i> Click below to send your booking to our lab on WhatsApp:
-                </p>
-                <a href="${waURL}" target="_blank" rel="noopener noreferrer"
-                   style="display:inline-flex; align-items:center; gap:0.6rem; padding:1rem 2rem;
-                          background:linear-gradient(135deg,#25D366,#128C7E); color:#fff;
-                          border-radius:6px; font-weight:700; text-decoration:none;
-                          text-transform:uppercase; letter-spacing:0.1em; font-size:0.9rem;
-                          box-shadow:0 0 25px rgba(37,211,102,0.4);">
-                    <i class="fab fa-whatsapp"></i> Confirm via WhatsApp
-                </a>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem;">
-                    This will open WhatsApp with your details pre-filled.
-                </p>
-            </div>`;
+    // Fallback: if popup was blocked anyway (some mobile browsers),
+    // the button in showSuccess() gives the user a manual path.
+    if (!waWindow) {
+        console.warn('Popup blocked — user will use the WhatsApp button instead.');
     }
 
-    // Reset form state
-    form.reset();
-    document.querySelectorAll('#appointmentForm input, #appointmentForm select')
-        .forEach(f => f.classList.remove('valid', 'error'));
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fab fa-whatsapp"></i> Send Booking via WhatsApp';
+    // Show success UI with the same URL as a backup button
+    showSuccess(data, waURL);
 }
 
+// ─── Inline form error ─────────────────────────────────────────────────────
 function showFormError(msg) {
-    // Flash an error near the submit area
     let el = document.getElementById('form-error-inline');
     if (!el) {
         el = document.createElement('p');
@@ -277,17 +367,13 @@ function showFormError(msg) {
     setTimeout(() => { if (el) el.textContent = ''; }, 4000);
 }
 
-// ─────────────────────────────────────────────────────────────
-// Header scroll effect
-// ─────────────────────────────────────────────────────────────
+// ─── Header scroll effect ──────────────────────────────────────────────────
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.site-header');
     header?.classList.toggle('scrolled', window.scrollY > 50);
 }, { passive: true });
 
-// ─────────────────────────────────────────────────────────────
-// Smooth scroll anchors
-// ─────────────────────────────────────────────────────────────
+// ─── Smooth scroll anchors ─────────────────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -296,18 +382,14 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// ─────────────────────────────────────────────────────────────
-// Glitch effect on brand kicker
-// ─────────────────────────────────────────────────────────────
+// ─── Glitch effect on brand kicker ────────────────────────────────────────
 const brandKicker = document.querySelector('.brand-kicker');
 if (brandKicker) {
     brandKicker.addEventListener('mouseenter', () => brandKicker.style.animation = 'glitch 0.3s ease');
     brandKicker.addEventListener('mouseleave', () => brandKicker.style.animation = '');
 }
 
-// ─────────────────────────────────────────────────────────────
-// Dynamic styles injected once
-// ─────────────────────────────────────────────────────────────
+// ─── Dynamic styles ────────────────────────────────────────────────────────
 const dynamicStyles = document.createElement('style');
 dynamicStyles.textContent = `
     @keyframes shake {
