@@ -11,13 +11,12 @@
 
 ## ✨ Features
 
-- 🩺 **Comprehensive Test Listings** — Blood tests, liver function, kidney function, thyroid & hormones, and more
-- 📅 **Online Appointment Booking** — Multi-step form with WhatsApp integration for instant confirmation
-- 📱 **Fully Responsive** — Optimized for desktop, tablet, and mobile devices
-- 🎨 **Cyberpunk Dark Theme** — Kali Linux-inspired aesthetic with neon accents
-- ⚡ **Fast Performance** — Static HTML/CSS/JS with no build step required
-- 🔒 **Security Headers** — CSP, X-Frame-Options, and other security best practices
-- ♿ **Accessibility** — Semantic HTML, proper labels, and keyboard navigation
+- 🩺 **Comprehensive Test Listings**: Blood tests, liver function, kidney function, thyroid & hormones, and more
+- 📅 **Online Appointment Booking**: Multi-step form with WhatsApp integration for instant confirmation
+- 📱 **Fully Responsive**: Optimized for desktop, tablet, and mobile devices
+- ⚡ **Fast Performance**: Static HTML/CSS/JS with no build step required
+- 🔒 **Security Headers**: CSP, X-Frame-Options, and other security best practices
+- ♿ **Accessibility**: Semantic HTML, proper labels, and keyboard navigation
 
 ---
 
@@ -32,16 +31,16 @@
 ```
 ┌─────────────────────────────────────────────┐
 │  KDL  Kuwait Diagnostic Laboratory          │
-│  Home | About | Tests | Book | Contact       │
+│  Home | About | Tests | Book | Contact      │
 ├─────────────────────────────────────────────┤
 │                                             │
 │  [Trusted Clinical Diagnostics]             │
-│  Precision Testing With Fast, Clear Results   │
+│  Precision Testing With Fast, Clear Results │
 │                                             │
-│  [Book Appointment]  [Our Tests]             │
+│  [Book Appointment]  [Our Tests]            │
 │                                             │
-│  15K+ Tests    98% On-time    24 hrs         │
-│  monthly       reports        turnaround     │
+│  15K+ Tests    98% On-time    24 hrs        │
+│  monthly       reports        turnaround    │
 │                                             │
 └─────────────────────────────────────────────┘
 ```
