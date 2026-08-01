@@ -1,4 +1,4 @@
-![](https://capsule-render.vercel.app/api?type=waving&color=0:0d0d0d,100:00FFAA&height=220&section=header&text=ABYSS%20CORP&fontSize=75&fontColor=ffffff&animation=fadeIn)
+![](https://capsule-render.vercel.app/api?type=waving&color=0:0d0d0d,100:00FFAA&height=220&section=header&text=%20KDL&fontSize=75&fontColor=ffffff&animation=fadeIn)
 > A modern, responsive website for Kuwait Diagnostic Laboratory — delivering trusted clinical diagnostics with precision testing and fast, clear results.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-vercel-black?style=for-the-badge&logo=vercel)](https://kuwait-diagnostic-laboratory-websit.vercel.app)
