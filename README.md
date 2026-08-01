@@ -1,4 +1,4 @@
-# Kuwait Diagnostic Laboratory (KDL) 🏥
+https://capsule-render.vercel.app/api?type=venom&color=0:0d0d0d,50:1a0033,100:00FFAA&height=220&section=header&text=KDL%20&fontSize=75&fontColor=00FFAA&animation=fadeIn&fontAlignY=40
 
 > A modern, responsive website for Kuwait Diagnostic Laboratory — delivering trusted clinical diagnostics with precision testing and fast, clear results.
 
